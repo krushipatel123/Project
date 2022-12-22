@@ -1,0 +1,29 @@
+
+.modal:nth-of-type(even) {
+  z-index: 1052 !important;
+}
+
+.myOwnBg {
+  color: green !important;
+}
+
+
+.warn{
+  color:red !important;
+}
+
+.btn1 {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  cursor: pointer;
+  
+}
+.selected {
+  background-color: aqua;
+}
+
+input.ng-invalid.ng-touched{
+	border: 2px solid red;
+ 	color: black; 
+}

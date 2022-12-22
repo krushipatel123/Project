@@ -1,0 +1,262 @@
+<main>
+  <div class="container px-4 py-5" id="featured-3">
+    <h2 class="pb-2 border-bottom">Demo Project</h2>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+      (click)="getDataBudget()">
+      Click Here For Adding Budget
+    </button>
+
+  </div>
+
+</main>
+
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Budget Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form class="row g-3" #form="ngForm" (ngSubmit)="onSubmit(form)">
+        <div class="modal-body">
+
+          <div class="form-field">
+            <span class=""></span>
+            <label><b>Enter Budget</b></label>
+            <input type="number" name="budget" #budget="ngModel" class="form-control" placeholder="Enter Budget"
+              [(ngModel)]="budgets.budget" (focusout)="onKey($event)" required>
+            <p *ngIf="!budget.valid && budget.touched" style="color: #B71C1C;">Please enter the budget!</p>
+          </div>
+
+          <div class="required form-field mb-3">
+            <span class=""></span>
+            <label><b>Enter CategoryName</b></label>
+            <input type="text" name="categoryName" #categoryName="ngModel" class="form-control" placeholder="Enter name"
+              [(ngModel)]="budgets.categoryName" required>
+
+              <!-- <div *ngIf="categoryName?.errors && categoryName.touched">
+                <span class="alert-danger"  style="color: #B71C1C;">
+                  Please enter categoryname!
+                </span>
+              </div> -->
+            <p *ngIf="!categoryName.valid && categoryName.touched" style="color: #B71C1C;">Please enter categoryname!
+            </p>
+          </div>
+        
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="onClose()">Close</button>
+
+          <button type="submit" data-bs-dismiss="modal" [disabled]="(!form.valid || totalBudget>5000)">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Budget Demo</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Budget : 5000 </h5>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="add col">
+                <button type="button" data-dismiss="modal" class="btn btn-primary" (click)="onAddClick()">
+                  Add
+                </button>
+
+              </div>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Id</th>
+                    <th>Budget</th>
+                    <th>CategoryName</th>
+                  </tr>
+                </thead>
+
+
+                <tbody>
+
+                  <tr *ngFor="let item of newData" [style.background-color]="item.budgetID == cindex?'#BBDEFB':'white'"
+                    (dblclick)="Edit(item.budgetID)" (click)="getProductsById(item.budgetID)">
+                    <td>{{item.budgetID}}</td>
+                    <td><span class="myOwnBg"> {{item.budget}} </span><span *ngIf="item.budget < item.budgetValue"
+                        class="warn">/{{item.budgetValue}}</span></td>
+                    <td>{{item.categoryName}}</td>
+                    <td>
+                      <!-- <button  style='margin-right:16px' type="button" class="btn btn-info btn-sm"  data-bs-toggle="modal" data-bs-target="#exampleModal1" data-bs-dismiss="modal"  (click)="Edit(item.budgetId)">Edit</button> -->
+                      <button style='margin-right:16px' type="button" class="btn btn-secondary btn-sm"
+                        (click)="delete(item.budgetID)">Delete</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <hr>
+
+            <div class="row">
+              <h3>Budget Data Details</h3>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>CategoryName</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>File</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let desci of budgetDataDetailsList">
+                    <td>{{desci.budget.categoryName}}</td>
+
+                    <td>{{desci.amount}}</td>
+                    <td>{{desci.description}}</td>
+                    <td >{{desci.fileName}}</td>
+                    
+                    <!-- <td> <img [src]="createImgPath(desci.fileName)" alt="" style="width:60px; height:60px;"></td> -->
+                    <td>
+                      <button style='margin-right:16px' type="button" class="btn btn-info btn-sm"
+                        (click)="EditBudgetData(desci.budgetDataID)">Edit</button>
+
+                        <button style='margin-right:16px' type="button" class="btn btn-info btn-sm"
+                        (click)="previewFile(desci.fileName)">Preview</button>
+
+                      <button style='margin-right:16px' type="button" class="btn btn-secondary btn-sm"
+                        (click)="deleteBudgetData(desci.budgetDataID)">Delete</button>
+                      <button style='margin-right:16px' type="button" class="btn1"
+                        (click)="downloadUploadFile(desci.fileName)">Download File</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <hr>
+
+            <form class="row g-3" #newi="ngForm" (ngSubmit)="onSaveBudgetData(newi)">
+              <div class="row">
+                <div class="col-3" [hidden]="true">
+                  <div class="form-field" >
+                    <span class=""></span>
+                    <input type="text" class="form-control" name="amt" #amt="ngModel" placeholder="Enter categoryName"
+                      [(ngModel)]="budgetData.catName" required >
+                  </div>
+                </div>
+
+                <div class="col-3">
+                  <div class="form-field">
+                    <span class=""></span>
+                    <input type="number" class="form-control" ngModel name="amt" #amt="ngModel" placeholder="Enter amount"
+                      [(ngModel)]="budgetData.amount" required>
+                     
+                    <p *ngIf="!amt.valid && amt.touched" >Please enter amount!</p>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="form-field">
+                    <span class=""></span>
+                    <input type="text" class="form-control" ngModel name="descu" #descu="ngModel"
+                      placeholder="Enter description" [(ngModel)]="budgetData.description" required>
+                    <p *ngIf="!descu.valid && descu.touched" >Please enter description!</p>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="form-field">
+                    <span class=""></span>
+                    <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload
+                      [(ngModel)]="budgetData.fileName">
+                  </div>
+                </div>
+                <div class="col-3">
+                  <button type="submit" [disabled]="!isVisible || !newi.valid">Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+    
+
+  </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal12" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel1">Edit BudgetDataDetails</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form class="row g-3" #form1="ngForm" (ngSubmit)="onSaveBudgetData(form1)">
+        <div class="modal-body">
+          <div class="form-field">
+            <span class=""></span>
+            
+            <label><b>Amount:</b></label>
+            <input type="number" name="amount" #amount="ngModel" class="form-control" placeholder="Enter Rupee"
+              [(ngModel)]="budgetData.amount" required>
+            <p *ngIf="!amount.valid && amount.touched" style="color: #B71C1C;">Please enter the budget!</p>
+          </div>
+
+          <div class="form-field mb-3">
+            <span class=""></span>
+            
+            <label><b>Description:</b></label>
+            <input type="text" name="description" #description="ngModel" class="form-control" placeholder="Enter name"
+              [(ngModel)]="budgetData.description" required>
+            <p *ngIf="!description.valid && description.touched" style="color: #B71C1C;">Please enter categoryname!</p>
+          </div>
+         
+
+          <div class="form-field mb-3">
+            <span class=""></span>
+            
+            <label><b>File:</b></label>
+            <input type="text" name="filename" #filename="ngModel" class="form-control mb-3"
+              (change)="onFileSelected($event)" placeholder="Enter File" [(ngModel)]="budgetData.fileName">
+            <input type="file" name="filename" #filename="ngModel" class="form-control mb-3"
+              (change)="onFileSelected($event)" placeholder="Enter File" [(ngModel)]="budgetData.fileName">
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"  (click)="onCloseClick()">Close</button>
+          <button type="submit" data-bs-dismiss="modal" [disabled]="!form1.valid">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Preview Invoice: {{fileNameForTitle}}</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+    <iframe [src]="fileNameForPreview" width="100%" height="100%"
+                  style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;height:85vh"> </iframe>
+		<!-- <ngx-extended-pdf-viewer [src]="pdfurl"></ngx-extended-pdf-viewer>
+    <ngx-doc-viewer [url]="doc" viewer="google"></ngx-doc-viewer>
+    <img [src]="pdfurl" alt="" style="width:60px; height:60px;"> -->
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Close</button>
+	</div>
+</ng-template>
+
+
+
